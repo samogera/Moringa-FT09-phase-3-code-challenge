@@ -1,10 +1,14 @@
+# models/magazine.py
+import sqlite3
 from database.connection import get_db_connection
+
 class Magazine:
     def __init__(self, name, category):
         self._name = name
         self._category = category
         self._id = None
 
+    def save(self):
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute('INSERT INTO magazines (name, category) VALUES (?, ?)', (self._name, self._category))
@@ -20,12 +24,6 @@ class Magazine:
     def name(self):
         return self._name
 
-    @name.setter
-    def name(self, value):
-        if not isinstance(value, str) or len(value) < 2 or len(value) > 16:
-            raise ValueError("Name must be a string between 2 and 16 characters")
-        self._name = value
-
     @property
     def category(self):
         return self._category
@@ -39,6 +37,7 @@ class Magazine:
     @classmethod
     def all_magazines(cls):
         conn = get_db_connection()
+        conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         cursor.execute('SELECT * FROM magazines')
         magazines = cursor.fetchall()

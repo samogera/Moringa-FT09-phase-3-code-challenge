@@ -1,3 +1,5 @@
+# models/author.py
+import sqlite3
 from database.connection import get_db_connection
 
 class Author:
@@ -5,6 +7,7 @@ class Author:
         self._name = name
         self._id = None
 
+    def save(self):
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute('INSERT INTO authors (name) VALUES (?)', (self._name,))
@@ -29,6 +32,7 @@ class Author:
     @classmethod
     def all_authors(cls):
         conn = get_db_connection()
+        conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         cursor.execute('SELECT * FROM authors')
         authors = cursor.fetchall()
@@ -37,6 +41,7 @@ class Author:
 
     def articles(self):
         conn = get_db_connection()
+        conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         cursor.execute('SELECT * FROM articles WHERE author_id = ?', (self.id,))
         articles = cursor.fetchall()
@@ -45,6 +50,7 @@ class Author:
 
     def magazines(self):
         conn = get_db_connection()
+        conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         cursor.execute('''
             SELECT DISTINCT magazines.* FROM magazines
