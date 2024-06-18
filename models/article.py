@@ -9,9 +9,7 @@ class Article:
         self._author = author
         self._magazine = magazine
         self._id = None
-        self._save_to_db()
 
-    def _save_to_db(self):
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute('INSERT INTO articles (title, content, author_id, magazine_id) VALUES (?, ?, ?, ?)',
