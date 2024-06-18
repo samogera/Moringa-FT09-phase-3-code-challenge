@@ -1,5 +1,4 @@
 from database.connection import get_db_connection
-
 class Magazine:
     def __init__(self, name, category):
         self._name = name
@@ -37,44 +36,11 @@ class Magazine:
             raise ValueError("Category must be a non-empty string")
         self._category = value
 
-    def articles(self):
+    @classmethod
+    def all_magazines(cls):
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute('SELECT * FROM articles WHERE magazine_id = ?', (self.id,))
-        articles = cursor.fetchall()
+        cursor.execute('SELECT * FROM magazines')
+        magazines = cursor.fetchall()
         conn.close()
-        return articles
-
-    def contributors(self):
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute('''
-            SELECT DISTINCT authors.* FROM authors
-            JOIN articles ON articles.author_id = authors.id
-            WHERE articles.magazine_id = ?
-        ''', (self.id,))
-        contributors = cursor.fetchall()
-        conn.close()
-        return contributors
-
-    def article_titles(self):
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute('SELECT title FROM articles WHERE magazine_id = ?', (self.id,))
-        titles = [row['title'] for row in cursor.fetchall()]
-        conn.close()
-        return titles if titles else None
-
-    def contributing_authors(self):
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute('''
-            SELECT authors.*, COUNT(articles.id) as article_count FROM authors
-            JOIN articles ON articles.author_id = authors.id
-            WHERE articles.magazine_id = ?
-            GROUP BY authors.id
-            HAVING article_count > 2
-        ''', (self.id,))
-        authors = cursor.fetchall()
-        conn.close()
-        return authors if authors else None
+        return magazines

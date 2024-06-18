@@ -26,6 +26,15 @@ class Author:
             raise ValueError("Name must be a non-empty string")
         self._name = value
 
+    @classmethod
+    def all_authors(cls):
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM authors')
+        authors = cursor.fetchall()
+        conn.close()
+        return authors
+
     def articles(self):
         conn = get_db_connection()
         cursor = conn.cursor()

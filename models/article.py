@@ -1,6 +1,4 @@
 from database.connection import get_db_connection
-from models.author import Author
-from models.magazine import Magazine
 
 class Article:
     def __init__(self, title, content, author, magazine):
@@ -37,3 +35,12 @@ class Article:
     @property
     def magazine(self):
         return self._magazine
+
+    @classmethod
+    def all_articles(cls):
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM articles')
+        articles = cursor.fetchall()
+        conn.close()
+        return articles
